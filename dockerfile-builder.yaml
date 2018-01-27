@@ -1,0 +1,139 @@
+project: 
+  title: &project_title alphasocket/dockerized-redis-alpine
+  codename: &project_codename redis-alpine
+  description: Redis service with pass configurable in ENV
+  
+#
+# Init builder
+#
+general:
+  envvars:
+    docker:
+      user: &general_docker_user 03192859189254 
+    keys:
+      True: "True"
+      false: "False"
+      dev: "dev"
+      prd: "prd"
+    
+#
+# Build process
+# Creates dockerfile and file used in it
+#
+build:
+  envvars:
+    name: *project_codename
+    branch:
+      valueFromCommand: 'git rev-parse --abbrev-ref HEAD'
+    commit:
+      valueFromCommand: 'git rev-parse --short HEAD'
+    version:
+      valueFromCommand: 'echo $BUILD_BRANCH | cut -d \- -f 1'
+    env:
+      valueFromCommand: 'env=$(echo $BUILD_BRANCH | cut -d \- -f 2); [ "$env" = "$BUILD_VERSION" ] && echo $GENERAL_KEYS_PRD || echo $env'
+    # Redis
+    redis:
+      port: 6379
+    # Docker
+    dockerfile:
+      image: redis:alpine
+      ports:
+        main: $BUILD_REDIS_PORT
+      cmd:  'docker-entrypoint.sh --requirepass \"$CONFIG_REDIS_PASS\"'
+
+#
+# Setup process injected in dockerfile
+#
+setup:
+  # Setup env 
+  envvars:
+    dependencies:
+      setup: ""
+      config: ""
+#
+# Config process run just before the entrypoint
+#
+config:
+  # Config env 
+  envvars:
+    redis:
+      pass: redis-default-pass
+
+test:
+  envvars:
+    name: $BUILD_NAME
+    port: 30080
+    dockerfile:
+      tag: 
+        user: *general_docker_user
+        name: $BUILD_NAME
+        version: $BUILD_BRANCH
+
+  processes:
+    #
+    # Starting
+    #
+    - title: "Starting varnish container"
+      commands:
+        - TEST_CONTAINER_VARNISH_ID=$(
+            docker run 
+              -d --name=$TEST_NAME
+              -p 127.0.0.1:${TEST_PORT}:${BUILD_DOCKERFILE_PORTS_MAIN}
+              -e CONFIG_VARNISH_BACKEND_ADDRESS=127.0.0.1
+              -e CONFIG_VARNISH_BACKEND_PORT=8080
+              ${TEST_DOCKERFILE_TAG_USER}/${TEST_DOCKERFILE_TAG_NAME}:${TEST_DOCKERFILE_TAG_VERSION}
+          )
+        - TEST_CONTAINER_VARNISH_STATUS=$(sleep 1 && docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_VARNISH_ID)
+
+    - title: "Testing varnish container"
+      shell_condition: '! "$TEST_CONTAINER_VARNISH_STATUS" = "true"'
+      commands:
+        - echo "Varnish container failed, print logs and exiting\n"
+        - docker logs $TEST_CONTAINER_VARNISH_ID
+        - exit 1
+
+    # 
+    # Run nginx
+    # 
+    - title: "Starting nginx container"
+      commands: 
+        - TEST_CONTAINER_NGINX_ID=$(
+            docker run 
+              -d --net=container:$TEST_NAME 
+              03192859189254/dockerized-nginx-tester:latest
+          )
+        - TEST_CONTAINER_NGINX_STATUS=$(sleep 1 && docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_NGINX_ID)
+
+    - title: "Testing nginx container"
+      shell_condition: '! "$TEST_CONTAINER_NGINX_STATUS" = "true"'
+      commands:
+        - echo "Httpd container failed, print logs and exiting\n"
+        - docker logs $TEST_CONTAINER_NGINX_ID
+        - exit 1
+
+    #
+    # TESTING
+    #
+    - title: "Testing varnish service"
+      commands:
+        - HTTP_CODE=$( sleep 1 && curl -sLI 127.0.0.1:${TEST_PORT}/index.html -o /dev/null -w '%{http_code}\n' )
+        - HTTP_HEADERS=$( sleep 1 && curl -sLI 127.0.0.1:${TEST_PORT}/index.html )
+        - VARNISH_TEST=$(echo "$HTTP_HEADERS" | grep -q "X-Varnish" && echo "Success")
+
+    - title: "Checking exit code"
+      shell_condition: '! "$HTTP_CODE" = "200"'
+      commands:
+        - echo "### Test failed, received HTTP code ${HTTP_CODE} printing log\n" 
+        - docker logs $TEST_CONTAINER_VARNISH_ID
+        - exit 1
+
+    - title: "Checking varnish headers"
+      shell_condition: '! "$VARNISH_TEST" = "Success"'
+      commands:
+        - echo "### Test failed, varnish headers not found during HTTP request. Printing log\n" 
+        - docker logs $TEST_CONTAINER_VARNISH_ID
+        - exit 1
+
+    - title: "Success"
+      commands:
+        - echo "### Test Succeeded, received HTTP code ${HTTP_CODE} printing log\n" 
