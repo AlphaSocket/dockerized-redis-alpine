@@ -4,6 +4,9 @@
 # exit if a command fails
 set -e
 
+# Install dependencies
+apk add --no-cache $SETUP_DEPENDENCIES_CONFIG $SETUP_DEPENDENCIES_SETUP
+
 
 
 exit 0
