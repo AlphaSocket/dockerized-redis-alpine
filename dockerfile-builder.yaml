@@ -31,15 +31,20 @@ build:
       valueFromCommand: 'echo $BUILD_BRANCH | cut -d \- -f 1'
     env:
       valueFromCommand: 'env=$(echo $BUILD_BRANCH | cut -d \- -f 2); [ "$env" = "$BUILD_VERSION" ] && echo $GENERAL_KEYS_PRD || echo $env'
+    paths:
+      config:
+        redis: /etc/redis/
     # Redis
-    redis:
+    redis:        
       port: 6379
     # Docker
     dockerfile:
       image: redis:alpine
       ports:
         main: $BUILD_REDIS_PORT
-      cmd:  'docker-entrypoint.sh --requirepass \"$CONFIG_REDIS_PASS\"'
+      cmd: 'docker-entrypoint.sh $CONFIG_PATHS_CONFIG_REDIS --requirepass \"$CONFIG_REDIS_PASS\"'
+  imports:
+    - "imports/templates:/usr/local/templates"
 
 #
 # Setup process injected in dockerfile
@@ -49,15 +54,35 @@ setup:
   envvars:
     dependencies:
       setup: ""
-      config: ""
+      config: gettext
+    paths:
+      config:
+        redis: /etc/redis/
+  # Setup Processes
+  processes:
+    - title: "Install dependencies"
+      commands: 
+        - "apk add --no-cache $SETUP_DEPENDENCIES_CONFIG $SETUP_DEPENDENCIES_SETUP"
+
 #
 # Config process run just before the entrypoint
 #
 config:
   # Config env 
   envvars:
+    paths:
+      templates:
+        redis: /usr/local/templates/redis.conf
+      config:
+        redis: $SETUP_PATHS_CONFIG_REDIS/redis.conf
     redis:
+      persistence: 'yes'
       pass: redis-default-pass
+  
+  processes:
+    - title: "Create server conf"
+      commands:
+       - envsubst < $CONFIG_PATHS_TEMPLATES_REDIS > $CONFIG_PATHS_CONFIG_REDIS
 
 test:
   envvars:
@@ -73,7 +98,7 @@ test:
     #
     # Starting
     #
-    - title: "Starting container"
+    - title: "Starting container" 
       commands:
         - TEST_CONTAINER_REDIS_ID=$(
             docker run 
