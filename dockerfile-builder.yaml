@@ -96,8 +96,8 @@ test:
     #
     - title: "Testing service"
       commands:
-        - apt install redis-cli -y
-        - PING_RESULT=$( sleep 1 && redis-cli ping -p ${TEST_PASS})
+        - sudo apt install redis-cli -y
+        - PING_RESULT=$( redis-cli ping -p ${TEST_PORT} -a ${TEST_PASS} )
 
     - title: "Checking"
       shell_condition: '! "$PING_RESULT" = "pong"'
