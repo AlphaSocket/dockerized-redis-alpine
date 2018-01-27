@@ -13,7 +13,7 @@ before_install:
         --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` .
 
 script:
-# Starting varnish container
+# Starting container
  - TEST_CONTAINER_REDIS_ID=$( docker run -d --name=redis-alpine -p 127.0.0.1:30080:6379 -e CONFIG_REDIS_PASS=${TEST_PASS} 03192859189254/redis-alpine:latest )
  - TEST_CONTAINER_REDIS_STATUS=$(sleep 1 && docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_REDIS_ID)
 

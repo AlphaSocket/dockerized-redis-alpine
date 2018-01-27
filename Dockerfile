@@ -16,7 +16,7 @@ ENV \
 	GENERAL_KEYS_PRD="prd" \
 	BUILD_NAME="redis-alpine" \
 	BUILD_BRANCH="latest" \
-	BUILD_COMMIT="a3d8088" \
+	BUILD_COMMIT="8ae77a5" \
 	BUILD_VERSION="latest" \
 	BUILD_ENV="prd" \
 	BUILD_REDIS_PORT="6379" \
@@ -36,12 +36,12 @@ RUN if [ ! -d "/usr/local/bin/setup" ]; then \
     fi
 
 ADD bin/docker-config /usr/local/bin/docker-config
-ADD bin/setup /usr/local/bin/setup/1517021913
-ADD bin/config /usr/local/bin/config/1517021913
+ADD bin/setup /usr/local/bin/setup/1517022222
+ADD bin/config /usr/local/bin/config/1517022222
 
 RUN chmod +x -R /usr/local/bin && \
     sync && \
-    /usr/local/bin/setup/1517021913 
+    /usr/local/bin/setup/1517022222 
 
 EXPOSE 6379 6379
 
@@ -50,5 +50,5 @@ ENTRYPOINT ["/bin/sh", "-c"]
 CMD ["/usr/local/bin/docker-config && docker-entrypoint.sh --requirepass \"$CONFIG_REDIS_PASS\""]
 
 LABEL \
-    org.label-schema.vcs-ref=a3d8088 \
+    org.label-schema.vcs-ref=8ae77a5 \
     org.label-schema.vcs-url="https://github.com/AlphaSocket/dockerized-redis-alpine"
