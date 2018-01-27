@@ -5,6 +5,7 @@
 Redis service with pass configurable in ENV
 
 ## Branches & Versions
+- latest
 
 
 ## Packages installed
