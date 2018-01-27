@@ -73,7 +73,7 @@ test:
     #
     # Starting
     #
-    - title: "Starting varnish container"
+    - title: "Starting container"
       commands:
         - TEST_CONTAINER_REDIS_ID=$(
             docker run 
