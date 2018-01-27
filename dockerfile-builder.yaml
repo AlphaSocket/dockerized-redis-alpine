@@ -57,7 +57,7 @@ setup:
       config: gettext
     paths:
       config:
-        redis: /etc/redis/
+        redis: /etc/redis
   # Setup Processes
   processes:
     - title: "Install dependencies"
