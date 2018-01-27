@@ -75,65 +75,38 @@ test:
     #
     - title: "Starting varnish container"
       commands:
-        - TEST_CONTAINER_VARNISH_ID=$(
+        - TEST_CONTAINER_REDIS_ID=$(
             docker run 
               -d --name=$TEST_NAME
               -p 127.0.0.1:${TEST_PORT}:${BUILD_DOCKERFILE_PORTS_MAIN}
-              -e CONFIG_VARNISH_BACKEND_ADDRESS=127.0.0.1
-              -e CONFIG_VARNISH_BACKEND_PORT=8080
+              -e CONFIG_REDIS_PASS=${TEST_PASS}
               ${TEST_DOCKERFILE_TAG_USER}/${TEST_DOCKERFILE_TAG_NAME}:${TEST_DOCKERFILE_TAG_VERSION}
           )
-        - TEST_CONTAINER_VARNISH_STATUS=$(sleep 1 && docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_VARNISH_ID)
+        - TEST_CONTAINER_REDIS_STATUS=$(sleep 1 && docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_REDIS_ID)
 
-    - title: "Testing varnish container"
-      shell_condition: '! "$TEST_CONTAINER_VARNISH_STATUS" = "true"'
+    - title: "Testing container"
+      shell_condition: '! "$TEST_CONTAINER_REDIS_STATUS" = "true"'
       commands:
-        - echo "Varnish container failed, print logs and exiting\n"
-        - docker logs $TEST_CONTAINER_VARNISH_ID
-        - exit 1
-
-    # 
-    # Run nginx
-    # 
-    - title: "Starting nginx container"
-      commands: 
-        - TEST_CONTAINER_NGINX_ID=$(
-            docker run 
-              -d --net=container:$TEST_NAME 
-              03192859189254/dockerized-nginx-tester:latest
-          )
-        - TEST_CONTAINER_NGINX_STATUS=$(sleep 1 && docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_NGINX_ID)
-
-    - title: "Testing nginx container"
-      shell_condition: '! "$TEST_CONTAINER_NGINX_STATUS" = "true"'
-      commands:
-        - echo "Httpd container failed, print logs and exiting\n"
-        - docker logs $TEST_CONTAINER_NGINX_ID
+        - echo "Container failed, print logs and exiting\n"
+        - docker logs $TEST_CONTAINER_REDIS_ID
         - exit 1
 
     #
     # TESTING
     #
-    - title: "Testing varnish service"
+    - title: "Testing service"
       commands:
-        - HTTP_CODE=$( sleep 1 && curl -sLI 127.0.0.1:${TEST_PORT}/index.html -o /dev/null -w '%{http_code}\n' )
-        - HTTP_HEADERS=$( sleep 1 && curl -sLI 127.0.0.1:${TEST_PORT}/index.html )
-        - VARNISH_TEST=$(echo "$HTTP_HEADERS" | grep -q "X-Varnish" && echo "Success")
+        - apt install redis-cli -y
+        - PING_RESULT=$( sleep 1 && redis-cli ping -p ${TEST_PASS})
 
-    - title: "Checking exit code"
-      shell_condition: '! "$HTTP_CODE" = "200"'
+    - title: "Checking"
+      shell_condition: '! "$PING_RESULT" = "pong"'
       commands:
-        - echo "### Test failed, received HTTP code ${HTTP_CODE} printing log\n" 
-        - docker logs $TEST_CONTAINER_VARNISH_ID
-        - exit 1
-
-    - title: "Checking varnish headers"
-      shell_condition: '! "$VARNISH_TEST" = "Success"'
-      commands:
-        - echo "### Test failed, varnish headers not found during HTTP request. Printing log\n" 
-        - docker logs $TEST_CONTAINER_VARNISH_ID
+        - echo "### Test failed, received ${PING_RESULT} printing log\n" 
+        - docker logs $TEST_CONTAINER_REDIS_ID
         - exit 1
 
     - title: "Success"
+      shell_condition: '"$PING_RESULT" = "pong"'
       commands:
-        - echo "### Test Succeeded, received HTTP code ${HTTP_CODE} printing log\n" 
+        - echo "### Test Succeeded, received ${PING_RESULT}\n" 
