@@ -43,7 +43,7 @@ build:
       ports:
         main: $BUILD_REDIS_PORT
       cmd: 'docker-entrypoint.sh $CONFIG_PATHS_CONFIG_REDIS --requirepass \"$CONFIG_REDIS_PASS\"'
-  imports:
+  import:
     - "imports/templates:/usr/local/templates"
 
 #
