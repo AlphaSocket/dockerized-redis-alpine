@@ -129,13 +129,13 @@ test:
         - PING_RESULT=$( redis-cli -p ${TEST_PORT} -a ${TEST_PASS} ping )
 
     - title: "Checking"
-      shell_condition: '! "$PING_RESULT" = "pong"'
+      shell_condition: '! "$PING_RESULT" = "PONG"'
       commands:
         - echo "### Test failed, received ${PING_RESULT} printing log\n" 
         - docker logs $TEST_CONTAINER_REDIS_ID
         - exit 1
 
     - title: "Success"
-      shell_condition: '"$PING_RESULT" = "pong"'
+      shell_condition: '"$PING_RESULT" = "PONG"'
       commands:
         - echo "### Test Succeeded, received ${PING_RESULT}\n" 
