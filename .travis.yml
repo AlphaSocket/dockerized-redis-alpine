@@ -24,8 +24,7 @@ script:
         exit 1;
     fi
 # Testing service
- - sudo apt install redis-cli -y
- - PING_RESULT=$( redis-cli ping -p 30080 -a ${TEST_PASS} )
+ - PING_RESULT=$( redis-cli ping -p30080 -a${TEST_PASS} )
 
 # Checking
  - if [ ! "$PING_RESULT" = "pong" ]; then
