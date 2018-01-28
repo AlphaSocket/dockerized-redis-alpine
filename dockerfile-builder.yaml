@@ -92,6 +92,7 @@ test:
   envvars:
     name: $BUILD_NAME
     port: 30080
+    pass: testPasswordRedis
     dockerfile:
       tag: 
         user: *general_docker_user
@@ -125,7 +126,7 @@ test:
     #
     - title: "Testing service"
       commands:
-        - PING_RESULT=$( redis-cli ping -p${TEST_PORT} -a${TEST_PASS} )
+        - PING_RESULT=$( redis-cli -p${TEST_PORT} -a${TEST_PASS} ping )
 
     - title: "Checking"
       shell_condition: '! "$PING_RESULT" = "pong"'
