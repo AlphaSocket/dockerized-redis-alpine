@@ -47,7 +47,7 @@ if [ ! "$TEST_CONTAINER_REDIS_STATUS" = "true" ]; then
     exit 1;
 fi
 # Testing service
-PING_RESULT=$( redis-cli -p30080 -atestPasswordRedis ping )
+PING_RESULT=$( redis-cli -p 30080 -a testPasswordRedis ping )
 
 # Checking
 if [ ! "$PING_RESULT" = "pong" ]; then
