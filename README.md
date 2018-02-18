@@ -1,8 +1,12 @@
 # alphasocket/dockerized-redis-alpine
 #### redis-alpine
-[![](https://travis-ci.org/AlphaSocket/dockerized-redis-alpine.svg?branch=latest )]() [![](https://images.microbadger.com/badges/image/03192859189254/dockerized-redis-alpine:latest.svg)](https://microbadger.com/images/03192859189254/dockerized-redis-alpine:latest ) [![](https://images.microbadger.com/badges/version/03192859189254/dockerized-redis-alpine:latest.svg)](https://microbadger.com/images/03192859189254/dockerized-redis-alpine:latest)
-
 Redis service with pass configurable in ENV
+
+
+| [![Build Status](https://semaphoreci.com/api/v1/alphasocket/dockerized-redis-alpine/branches/latest/badge.svg)](https://semaphoreci.com/alphasocket/dockerized-redis-alpine) | Size / Layers | Version |
+| ----- | ----- | ----- |
+| Dev image | [![](https://images.microbadger.com/badges/image/03192859189254/dockerized-redis-alpine:latest.svg)](https://microbadger.com/images/03192859189254/redis-alpine:latest ) | [![](https://images.microbadger.com/badges/version/03192859189254/dockerized-redis-alpine:latest.svg)](https://microbadger.com/images/03192859189254/redis-alpine:latest) |
+| Prd image | [![](https://images.microbadger.com/badges/image/alphasocket/redis-alpine:latest.svg)](https://microbadger.com/images/alphasocket/redis-alpine:latest ) | [![](https://images.microbadger.com/badges/version/alphasocket/redis-alpine:latest.svg)](https://microbadger.com/images/alphasocket/redis-alpine:latest) |
 
 ## Branches & Versions
 - latest
@@ -15,10 +19,11 @@ Redis service with pass configurable in ENV
 
 ## Configurable envvars
 ~~~
+CONFIG_REDINESS_TEST="true"
+CONFIG_LIVENESS_TEST="true"
+CONFIG_PATHS_CONTAINER_STATUS="/tmp/container_status"
 CONFIG_PATHS_TEMPLATES_REDIS="/usr/local/templates/redis.conf"
 CONFIG_PATHS_CONFIG_REDIS="/etc/redis/redis.conf"
 CONFIG_REDIS_PERSISTENCE="yes"
 CONFIG_REDIS_PASS="redis-default-pass"
 ~~~
-
-
