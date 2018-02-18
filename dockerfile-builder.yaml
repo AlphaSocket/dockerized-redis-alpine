@@ -80,7 +80,7 @@ test:
         - TEST_CONTAINER_REDIS_ID=$(
             docker run 
               -d --name=$TEST_CONTAINER_NAME
-              -p 127.0.0.1:${TEST_HOST_PORT}:${BUILD_DOCKERFILE_PORTS_MAIN}
+              -p 127.0.0.1:${TEST_HOST_PORT}:${BUILD_PORTS_MAIN}
               -e CONFIG_REDIS_PASS=${TEST_REDIS_PASS}
               ${BUILD_USER}/${BUILD_NAME}:${BUILD_VERSION}
           )
