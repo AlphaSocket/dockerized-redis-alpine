@@ -1,0 +1,14 @@
+#!/bin/sh
+#
+# Run command
+#
+set -e
+
+# Configuration
+$(which docker-config)
+
+echo "### Starting container service"
+sh -c "docker-entrypoint.sh $CONFIG_PATHS_CONFIG_REDIS --requirepass \"$CONFIG_REDIS_PASS\""
+
+# Container command is failed if exiting here
+exit $?

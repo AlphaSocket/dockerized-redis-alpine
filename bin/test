@@ -1,7 +1,7 @@
 #!/bin/sh
 
 #
-# Local test script to build and test docker image
+# Local test script to test docker images
 #
 
 # exit if a command fails
@@ -10,23 +10,15 @@ set -e
 CURL=$(which curl)
 DOCKER=$(which docker)
 
-if [ CURL = '' ]; then
+if [ "$CURL" = '' ]; then
     echo 'The package curl is required\n'
     exit 1
 fi
 
-if [ DOCKER = '' ]; then
+if [ "$DOCKER" = '' ]; then
     echo 'Docker is required\n'
     exit 1
 fi
-
-echo "#\n# Building image\n#\n"
-docker build \
-    --no-cache \
-    -t 03192859189254/redis-alpine:latest \
-    --build-arg BUILD_COMMIT=`git rev-parse --short HEAD` \
-    --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
-    .
 
 echo "#\n# Cleaning docker\n#\n"
 running_containers=$(docker ps -aq)
@@ -34,28 +26,35 @@ if [ "$running_containers" ]
     then
         docker stop $running_containers -t 0 && docker system prune -f
 fi
+echo "# Cleaned"
 
 echo "#\n# Running test\n#\n"
 # Starting container
-TEST_CONTAINER_REDIS_ID=$( docker run -d --name=redis-alpine -p 127.0.0.1:30080:6379 -e CONFIG_REDIS_PASS=testPasswordRedis 03192859189254/redis-alpine:latest )
-TEST_CONTAINER_REDIS_STATUS=$(sleep 1 && docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_REDIS_ID)
+echo "### Starting container..."
+TEST_CONTAINER_REDIS_ID=$( docker run -d --name=redis-alpine -p 127.0.0.1:31167:${BUILD_DOCKERFILE_PORTS_MAIN} -e CONFIG_REDIS_PASS=testPasswordRedis 03192859189254/redis-alpine:latest )
+sleep 1
+TEST_CONTAINER_REDIS_STATUS=$( docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_REDIS_ID)
 
 # Testing container
+echo "### Testing container..."
 if [ ! "$TEST_CONTAINER_REDIS_STATUS" = "true" ]; then
     echo "Container failed, print logs and exiting\n";
     docker logs $TEST_CONTAINER_REDIS_ID;
     exit 1;
 fi
 # Testing service
-PING_RESULT=$( redis-cli -p 30080 -a testPasswordRedis ping )
+echo "### Testing service..."
+PING_RESULT=$( redis-cli -p ${TEST_PORT} -a ${TEST_PASS} ping )
 
 # Checking
+echo "### Checking..."
 if [ ! "$PING_RESULT" = "PONG" ]; then
     echo "### Test failed, received ${PING_RESULT} printing log\n";
     docker logs $TEST_CONTAINER_REDIS_ID;
     exit 1;
 fi
 # Success
+echo "### Success..."
 if [ "$PING_RESULT" = "PONG" ]; then
     echo "### Test Succeeded, received ${PING_RESULT}\n";
 fi

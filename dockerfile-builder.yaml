@@ -2,48 +2,25 @@ project:
   title: &project_title alphasocket/dockerized-redis-alpine
   codename: &project_codename redis-alpine
   description: Redis service with pass configurable in ENV
-  
-#
-# Init builder
-#
-general:
-  envvars:
-    docker:
-      user: &general_docker_user 03192859189254 
-    keys:
-      True: "True"
-      false: "False"
-      dev: "dev"
-      prd: "prd"
-    
 #
 # Build process
 # Creates dockerfile and file used in it
 #
 build:
   envvars:
-    name: *project_codename
-    branch:
-      valueFromCommand: 'git rev-parse --abbrev-ref HEAD'
-    commit:
-      valueFromCommand: 'git rev-parse --short HEAD'
-    version:
-      valueFromCommand: 'echo $BUILD_BRANCH | cut -d \- -f 1'
-    env:
-      valueFromCommand: 'env=$(echo $BUILD_BRANCH | cut -d \- -f 2); [ "$env" = "$BUILD_VERSION" ] && echo $GENERAL_KEYS_PRD || echo $env'
     paths:
       config:
         redis: /etc/redis/
+    name: *project_codename
+    from: redis:alpine
+    cmd: 'docker-entrypoint.sh $CONFIG_PATHS_CONFIG_REDIS --requirepass \"$CONFIG_REDIS_PASS\"'
     # Redis
     redis:        
       port: 6379
-    # Docker
-    dockerfile:
-      image: redis:alpine
-      ports:
-        main: $BUILD_REDIS_PORT
-      cmd: 'docker-entrypoint.sh $CONFIG_PATHS_CONFIG_REDIS --requirepass \"$CONFIG_REDIS_PASS\"'
-  import:
+    ports:
+      main:
+        valueFromParse: $BUILD_REDIS_PORT
+  imports:
     - "imports/templates:/usr/local/templates"
 
 #
@@ -78,7 +55,8 @@ config:
       templates:
         redis: /usr/local/templates/redis.conf
       config:
-        redis: $SETUP_PATHS_CONFIG_REDIS/redis.conf
+        redis:
+          valueFromParse: $SETUP_PATHS_CONFIG_REDIS/redis.conf
     redis:
       persistence: 'yes'
       pass: redis-default-pass
@@ -90,14 +68,8 @@ config:
 
 test:
   envvars:
-    name: $BUILD_NAME
-    port: 30080
-    pass: testPasswordRedis
-    dockerfile:
-      tag: 
-        user: *general_docker_user
-        name: $BUILD_NAME
-        version: $BUILD_BRANCH
+    redis:
+      pass: testPasswordRedis
 
   processes:
     #
@@ -107,12 +79,13 @@ test:
       commands:
         - TEST_CONTAINER_REDIS_ID=$(
             docker run 
-              -d --name=$TEST_NAME
-              -p 127.0.0.1:${TEST_PORT}:${BUILD_DOCKERFILE_PORTS_MAIN}
-              -e CONFIG_REDIS_PASS=${TEST_PASS}
-              ${TEST_DOCKERFILE_TAG_USER}/${TEST_DOCKERFILE_TAG_NAME}:${TEST_DOCKERFILE_TAG_VERSION}
+              -d --name=$TEST_CONTAINER_NAME
+              -p 127.0.0.1:${TEST_HOST_PORT}:${BUILD_DOCKERFILE_PORTS_MAIN}
+              -e CONFIG_REDIS_PASS=${TEST_REDIS_PASS}
+              ${BUILD_USER}/${BUILD_NAME}:${BUILD_VERSION}
           )
-        - TEST_CONTAINER_REDIS_STATUS=$(sleep 1 && docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_REDIS_ID)
+        - sleep 1
+        - TEST_CONTAINER_REDIS_STATUS=$( docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_REDIS_ID)
 
     - title: "Testing container"
       shell_condition: '! "$TEST_CONTAINER_REDIS_STATUS" = "true"'

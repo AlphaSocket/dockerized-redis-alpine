@@ -4,6 +4,7 @@
 set -e
 
 # Create server conf
+echo "### Create server conf..."
 envsubst < $CONFIG_PATHS_TEMPLATES_REDIS > $CONFIG_PATHS_CONFIG_REDIS
 
 
