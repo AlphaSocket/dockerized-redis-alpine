@@ -56,7 +56,7 @@ config:
         redis: /usr/local/templates/redis.conf
       config:
         redis:
-          valueFromParse: $SETUP_PATHS_CONFIG_REDIS/redis.conf
+          valueFromParse: $BUILD_PATHS_CONFIG_REDIS/redis.conf
     redis:
       persistence: 'yes'
       pass: redis-default-pass
@@ -68,6 +68,15 @@ config:
 
 test:
   envvars:
+    groups:
+      main:
+        id: 1063
+        name: 'redis'
+    users:
+      main: 
+        id: 1063
+        name: 'redis'
+        groups: 'redis'
     redis:
       pass: testPasswordRedis
 
