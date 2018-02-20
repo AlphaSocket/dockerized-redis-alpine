@@ -32,35 +32,38 @@ ENV \
 	BUILD_PORTS_MAIN="6379" \
 	SETUP_DEPENDENCIES_SETUP="" \
 	SETUP_DEPENDENCIES_CONFIG="gettext" \
-	SETUP_PATHS_CONFIG_REDIS="/etc/redis" \
+	SETUP_PATHS_BINARIES="/usr/local/bin" \
+	SETUP_PATHS_SETUP="/usr/local/bin/setup" \
+	SETUP_PATHS_CONFIG="/usr/local/bin/config" \
+	CONFIG_GROUPS_MAIN_ID="1000" \
+	CONFIG_GROUPS_MAIN_NAME="docker" \
+	CONFIG_GROUPS_ADDITIONAL_ID="1001" \
+	CONFIG_GROUPS_ADDITIONAL_NAME="" \
+	CONFIG_USERS_MAIN_ID="1000" \
+	CONFIG_USERS_MAIN_NAME="docker" \
+	CONFIG_USERS_MAIN_GROUPS="docker" \
+	CONFIG_USERS_ADDITIONAL_ID="1001" \
+	CONFIG_USERS_ADDITIONAL_NAME="" \
+	CONFIG_USERS_ADDITIONAL_GROUPS="" \
 	CONFIG_REDINESS_TEST="true" \
 	CONFIG_LIVENESS_TEST="true" \
 	CONFIG_PATHS_CONTAINER_STATUS="/tmp/container_status" \
 	CONFIG_PATHS_TEMPLATES_REDIS="/usr/local/templates/redis.conf" \
-	CONFIG_PATHS_CONFIG_REDIS="/etc/redis/redis.conf" \
+	CONFIG_PATHS_CONFIG_REDIS="/etc/redis//redis.conf" \
 	CONFIG_REDIS_PERSISTENCE="yes" \
 	CONFIG_REDIS_PASS="redis-default-pass"
-
-RUN if [ ! -d "/usr/local/bin/setup" ]; then \
-        mkdir -p /usr/local/bin/setup; \
-    fi \
-    && \
-    if [ ! -d "/usr/local/bin/config" ]; then \
-        mkdir -p /usr/local/bin/config; \
-    fi
-
 ADD imports/bin/docker-config /usr/local/bin/docker-config
 ADD imports/bin/docker-run /usr/local/bin/docker-run
 ADD imports/bin/docker-rediness-test /usr/local/bin/docker-rediness-test
 ADD imports/bin/docker-liveness-test /usr/local/bin/docker-liveness-test
-ADD imports/bin/setup /usr/local/bin/setup/1519002505
-ADD imports/bin/config /usr/local/bin/config/1519002505
+ADD imports/bin/setup /usr/local/bin/setup/1519170394
+ADD imports/bin/config /usr/local/bin/config/1519170394
 ADD imports/templates/redis.conf /usr/local/templates/redis.conf
 
 
 RUN chmod +x -R /usr/local/bin && \
     sync && \
-    /usr/local/bin/setup/1519002505 1>/dev/stdout 2>/dev/stderr
+    /usr/local/bin/setup/1519170394 1>/dev/stdout 2>/dev/stderr
 
 EXPOSE 6379 
 
