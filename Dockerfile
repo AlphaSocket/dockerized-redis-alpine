@@ -35,18 +35,18 @@ ENV \
 	SETUP_PATHS_BINARIES="/usr/local/bin" \
 	SETUP_PATHS_SETUP="/usr/local/bin/setup" \
 	SETUP_PATHS_CONFIG="/usr/local/bin/config" \
-	CONFIG_GROUPS_MAIN_ID="1000" \
-	CONFIG_GROUPS_MAIN_NAME="docker" \
+	CONFIG_REDINESS_TEST="true" \
+	CONFIG_LIVENESS_TEST="true" \
 	CONFIG_GROUPS_ADDITIONAL_ID="1001" \
 	CONFIG_GROUPS_ADDITIONAL_NAME="" \
-	CONFIG_USERS_MAIN_ID="1000" \
-	CONFIG_USERS_MAIN_NAME="docker" \
-	CONFIG_USERS_MAIN_GROUPS="docker" \
+	CONFIG_GROUPS_MAIN_ID="1063" \
+	CONFIG_GROUPS_MAIN_NAME="redis" \
 	CONFIG_USERS_ADDITIONAL_ID="1001" \
 	CONFIG_USERS_ADDITIONAL_NAME="" \
 	CONFIG_USERS_ADDITIONAL_GROUPS="" \
-	CONFIG_REDINESS_TEST="true" \
-	CONFIG_LIVENESS_TEST="true" \
+	CONFIG_USERS_MAIN_ID="1063" \
+	CONFIG_USERS_MAIN_NAME="redis" \
+	CONFIG_USERS_MAIN_GROUPS="redis" \
 	CONFIG_PATHS_CONTAINER_STATUS="/tmp/container_status" \
 	CONFIG_PATHS_TEMPLATES_REDIS="/usr/local/templates/redis.conf" \
 	CONFIG_PATHS_CONFIG_REDIS="/etc/redis//redis.conf" \
@@ -56,14 +56,14 @@ ADD imports/bin/docker-config /usr/local/bin/docker-config
 ADD imports/bin/docker-run /usr/local/bin/docker-run
 ADD imports/bin/docker-rediness-test /usr/local/bin/docker-rediness-test
 ADD imports/bin/docker-liveness-test /usr/local/bin/docker-liveness-test
-ADD imports/bin/setup /usr/local/bin/setup/1519171311
-ADD imports/bin/config /usr/local/bin/config/1519171311
+ADD imports/bin/setup /usr/local/bin/setup/1519208981
+ADD imports/bin/config /usr/local/bin/config/1519208981
 ADD imports/templates/redis.conf /usr/local/templates/redis.conf
 
 
 RUN chmod +x -R /usr/local/bin && \
     sync && \
-    /usr/local/bin/setup/1519171311 1>/dev/stdout 2>/dev/stderr
+    /usr/local/bin/setup/1519208981 1>/dev/stdout 2>/dev/stderr
 
 EXPOSE 6379 
 

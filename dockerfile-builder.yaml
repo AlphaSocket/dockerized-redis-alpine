@@ -51,6 +51,15 @@ setup:
 config:
   # Config env 
   envvars:
+    groups:
+      main:
+        id: 1063
+        name: 'redis'
+    users:
+      main: 
+        id: 1063
+        name: 'redis'
+        groups: 'redis'
     paths:
       templates:
         redis: /usr/local/templates/redis.conf
@@ -68,15 +77,6 @@ config:
 
 test:
   envvars:
-    groups:
-      main:
-        id: 1063
-        name: 'redis'
-    users:
-      main: 
-        id: 1063
-        name: 'redis'
-        groups: 'redis'
     redis:
       pass: testPasswordRedis
 
