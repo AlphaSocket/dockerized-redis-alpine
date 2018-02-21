@@ -1,8 +1,10 @@
 #!/bin/sh
-#
-
-# exit if a command fails
 set -e
+
+# Install all dependencies
+echo "### Install all dependencies..."
+apk add --no-cache $BUILDER_DEPENDENCIES $SETUP_DEPENDENCIES_SETUP $SETUP_DEPENDENCIES_CONFIG $SETUP_DEPENDENCIES_RUNTIME
+
 
 # Install dependencies
 echo "### Install dependencies..."
@@ -13,6 +15,7 @@ echo "### Setup config folder..."
 if [ ! -d "$BUILD_PATHS_CONFIG_REDIS" ]; then
     mkdir -p $BUILD_PATHS_CONFIG_REDIS;
 fi
+
 
 
 exit 0

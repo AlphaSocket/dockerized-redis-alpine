@@ -30,6 +30,7 @@ ENV \
 	BUILD_REDIS_PORT="6379" \
 	BUILD_PORTS_ADDITIONAL="" \
 	BUILD_PORTS_MAIN="6379" \
+	SETUP_DEPENDENCIES_RUNTIME="" \
 	SETUP_DEPENDENCIES_SETUP="" \
 	SETUP_DEPENDENCIES_CONFIG="gettext" \
 	SETUP_PATHS_BINARIES="/usr/local/bin" \
@@ -56,14 +57,14 @@ ADD imports/bin/docker-config /usr/local/bin/docker-config
 ADD imports/bin/docker-run /usr/local/bin/docker-run
 ADD imports/bin/docker-rediness-test /usr/local/bin/docker-rediness-test
 ADD imports/bin/docker-liveness-test /usr/local/bin/docker-liveness-test
-ADD imports/bin/setup /usr/local/bin/setup/1519208981
-ADD imports/bin/config /usr/local/bin/config/1519208981
+ADD imports/bin/setup /usr/local/bin/setup/1519245480
+ADD imports/bin/config /usr/local/bin/config/1519245480
 ADD imports/templates/redis.conf /usr/local/templates/redis.conf
 
 
 RUN chmod +x -R /usr/local/bin && \
     sync && \
-    /usr/local/bin/setup/1519208981 1>/dev/stdout 2>/dev/stderr
+    /usr/local/bin/setup/1519245480 1>/dev/stdout 2>/dev/stderr
 
 EXPOSE 6379 
 

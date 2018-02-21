@@ -69,7 +69,7 @@ config:
     redis:
       persistence: 'yes'
       pass: redis-default-pass
-  
+
   processes:
     - title: "Create server conf"
       commands:
