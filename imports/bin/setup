@@ -3,7 +3,7 @@ set -e
 
 # Install all dependencies
 echo "### Install all dependencies..."
-apk add --no-cache $BUILDER_DEPENDENCIES $SETUP_DEPENDENCIES_SETUP $SETUP_DEPENDENCIES_CONFIG $SETUP_DEPENDENCIES_RUNTIME
+apk add --no-cache gettext $SETUP_DEPENDENCIES_SETUP $SETUP_DEPENDENCIES_CONFIG $SETUP_DEPENDENCIES_RUNTIME
 
 
 # Install dependencies
