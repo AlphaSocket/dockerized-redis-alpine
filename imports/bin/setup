@@ -10,8 +10,8 @@ apk add --no-cache $SETUP_DEPENDENCIES_CONFIG $SETUP_DEPENDENCIES_SETUP
 
 # Setup config folder
 echo "### Setup config folder..."
-if [ ! -d "$SETUP_PATHS_CONFIG_REDIS" ]; then
-    mkdir -p $SETUP_PATHS_CONFIG_REDIS;
+if [ ! -d "$BUILD_PATHS_CONFIG_REDIS" ]; then
+    mkdir -p $BUILD_PATHS_CONFIG_REDIS;
 fi
 
 
