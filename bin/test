@@ -31,7 +31,7 @@ echo "# Cleaned"
 echo "#\n# Running test\n#\n"
 # Starting container
 echo "### Starting container..."
-TEST_CONTAINER_REDIS_ID=$( docker run -d --name=redis-alpine -p 127.0.0.1:30756:6379 -e CONFIG_REDIS_PASS=testPasswordRedis 03192859189254/redis-alpine:latest )
+TEST_CONTAINER_REDIS_ID=$( docker run -d --name=redis-alpine -p 127.0.0.1:30974:6379 -e CONFIG_REDIS_PASS=testPasswordRedis 03192859189254/redis-alpine:latest )
 sleep 1
 TEST_CONTAINER_REDIS_STATUS=$( docker inspect -f '{{.State.Running}}' $TEST_CONTAINER_REDIS_ID)
 
@@ -44,7 +44,7 @@ if [ ! "$TEST_CONTAINER_REDIS_STATUS" = "true" ]; then
 fi
 # Testing service
 echo "### Testing service..."
-PING_RESULT=$( redis-cli -p 30756 -a testPasswordRedis ping )
+PING_RESULT=$( redis-cli -p 30974 -a testPasswordRedis ping )
 
 # Checking
 echo "### Checking..."
