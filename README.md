@@ -35,5 +35,6 @@ CONFIG_PATHS_CONTAINER_STATUS="/tmp/container_status"
 CONFIG_PATHS_TEMPLATES_REDIS="/usr/local/templates/redis.conf"
 CONFIG_PATHS_CONFIG_REDIS="/etc/redis//redis.conf"
 CONFIG_REDIS_PERSISTENCE="yes"
+CONFIG_REDIS_PERSISTENCE_PATH="/data"
 CONFIG_REDIS_PASS="redis-default-pass"
 ~~~

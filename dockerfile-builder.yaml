@@ -68,12 +68,18 @@ config:
           valueFromParse: $BUILD_PATHS_CONFIG_REDIS/redis.conf
     redis:
       persistence: 'yes'
+      persistence_path: '/data'
       pass: redis-default-pass
 
   processes:
     - title: "Create server conf"
       commands:
        - envsubst < $CONFIG_PATHS_TEMPLATES_REDIS > $CONFIG_PATHS_CONFIG_REDIS
+       
+    - title: "Enforce permissions on data"
+      shell_condition: '"$CONFIG_REDIS_PERSISTENCE_PATH" = "yes"'
+      commands:
+       - chown -R ${CONFIG_USERS_MAIN_NAME}:${CONFIG_GROUPS_MAIN_NAME} ${CONFIG_REDIS_PERSISTENCE_PATH}
 
 test:
   envvars:
