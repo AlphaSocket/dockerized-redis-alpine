@@ -52,19 +52,20 @@ ENV \
 	CONFIG_PATHS_TEMPLATES_REDIS="/usr/local/templates/redis.conf" \
 	CONFIG_PATHS_CONFIG_REDIS="/etc/redis//redis.conf" \
 	CONFIG_REDIS_PERSISTENCE="yes" \
+	CONFIG_REDIS_PERSISTENCE_PATH="/data" \
 	CONFIG_REDIS_PASS="redis-default-pass"
 ADD imports/bin/docker-config /usr/local/bin/docker-config
 ADD imports/bin/docker-run /usr/local/bin/docker-run
 ADD imports/bin/docker-rediness-test /usr/local/bin/docker-rediness-test
 ADD imports/bin/docker-liveness-test /usr/local/bin/docker-liveness-test
-ADD imports/bin/setup /usr/local/bin/setup/1519404272
-ADD imports/bin/config /usr/local/bin/config/1519404272
+ADD imports/bin/setup /usr/local/bin/setup/1519489300
+ADD imports/bin/config /usr/local/bin/config/1519489300
 ADD imports/templates/redis.conf /usr/local/templates/redis.conf
 
 
 RUN chmod +x -R /usr/local/bin && \
     sync && \
-    /usr/local/bin/setup/1519404272 1>/dev/stdout 2>/dev/stderr
+    /usr/local/bin/setup/1519489300 1>/dev/stdout 2>/dev/stderr
 
 EXPOSE 6379 
 

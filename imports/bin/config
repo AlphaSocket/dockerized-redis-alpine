@@ -7,6 +7,11 @@ set -e
 echo "### Create server conf..."
 envsubst < $CONFIG_PATHS_TEMPLATES_REDIS > $CONFIG_PATHS_CONFIG_REDIS
 
+# Enforce permissions on data
+echo "### Enforce permissions on data..."
+if [ "$CONFIG_REDIS_PERSISTENCE_PATH" = "yes" ]; then
+    chown -R ${CONFIG_USERS_MAIN_NAME}:${CONFIG_GROUPS_MAIN_NAME} ${CONFIG_REDIS_PERSISTENCE_PATH};
+fi
 
 
 exit 0
