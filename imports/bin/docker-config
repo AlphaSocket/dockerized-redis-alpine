@@ -12,7 +12,7 @@ then
 fi
 
 echo "### Starting container configuration"
-echo "running_config" > /tmp/container_status
+echo "configuring" > /tmp/container_status
 
 #
 # Setting up container users and groups
@@ -63,6 +63,8 @@ do
     $config_script 1>/dev/stdout 2>/dev/stderr; 
 done;
 
+echo "hardening" > /tmp/container_status
+
 #
 # HARDENING
 # Remove unused users
@@ -77,7 +79,7 @@ do
 done
 
 # End configuration
-echo "ready" > /tmp/container_status
 echo "### Finished container configuration"
+echo "ready" > /tmp/container_status
 
 exit 0

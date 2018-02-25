@@ -37,10 +37,6 @@ setup:
         redis: /etc/redis
   # Setup Processes
   processes:
-    - title: "Install dependencies"
-      commands: 
-        - "apk add --no-cache $SETUP_DEPENDENCIES_CONFIG $SETUP_DEPENDENCIES_SETUP"
-
     - title: "Setup config folder"
       shell_condition: '! -d "$BUILD_PATHS_CONFIG_REDIS"'
       commands:
